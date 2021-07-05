@@ -5,7 +5,7 @@
  * @since 5/07/2021
  * 
  */
-package com.bridgelabz.jdbcconnector;
+package com.bridgelabz.jdbcconnector.utils;
 
 import java.sql.Connection;
 import java.sql.Driver;
@@ -20,7 +20,15 @@ import com.bridgelabz.jdbcconnector.exception.JdbcConnectorException;
 public class JdbcConnectionFactory {
 	private static final Logger LOG = LogManager.getLogger(JdbcConnectionFactory.class);
 
-	public static void main(String[] args) throws JdbcConnectorException {
+	/**
+	 * Attempts to establish a connection to the given database URL. The
+	 * DriverManager attempts to select an appropriate driver from the set of
+	 * registered JDBC drivers.
+	 * 
+	 * @return
+	 * @throws JdbcConnectorException
+	 */
+	public static Connection getJdbcConnection() throws JdbcConnectorException {
 		String jdbcUrl = "jdbc:mysql://localhost:3306/payroll_service?useSSL=false";
 		String username = "root";
 		String password = "Ananyagowda123!";
@@ -39,6 +47,7 @@ public class JdbcConnectionFactory {
 		} catch (Exception e) {
 			throw new JdbcConnectorException(e.getMessage());
 		}
+		return connection;
 	}
 
 	/**
