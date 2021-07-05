@@ -1,22 +1,21 @@
 package com.bridgelabz.jdbcconnector;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.sql.SQLException;
 import java.util.List;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.bridgelabz.jdbcconnector.dto.Employee;
 import com.bridgelabz.jdbcconnector.exception.EmployeePayrollException;
 import com.bridgelabz.jdbcconnector.exception.JdbcConnectorException;
-import com.bridgelabz.jdbcconnector.service.IEmployeePayrollService;
 import com.bridgelabz.jdbcconnector.service.impl.EmployeePayrollService;
 
 public class EmployeePayrollServiceTest {
-	private IEmployeePayrollService employeePayrollService;
+	private EmployeePayrollService employeePayrollService;
 
 	@BeforeEach
 	public void initialize() {
@@ -30,4 +29,23 @@ public class EmployeePayrollServiceTest {
 		assertEquals(6, employeeList.size());
 	}
 
+	@Test
+	public void givenSalaryAndEmpName_shouldUpdateSalaryForGivenEmpName()
+			throws JdbcConnectorException, SQLException, EmployeePayrollException {
+		int updatedRows = employeePayrollService.updateSalaryByName("ananya", 200000.0);
+		assertTrue(updatedRows > 0);
+	}
+
+	@Test
+	public void givenEmpName_shouldRetrieveSalary() throws JdbcConnectorException, SQLException {
+		Double salary = employeePayrollService.getSalaryByName("ananya");
+		assertEquals(salary, 200000.0);
+	}
+
+	@Test
+	public void givenSalaryUpdated_shouldSyncWithDB() throws JdbcConnectorException, SQLException {
+		Double salaryInDB = employeePayrollService.getSalaryByName("ananya");
+		Double salaryInLocal = employeePayrollService.employeeSalaryMap.get("ananya");
+		assertEquals(salaryInDB, salaryInLocal);
+	}
 }

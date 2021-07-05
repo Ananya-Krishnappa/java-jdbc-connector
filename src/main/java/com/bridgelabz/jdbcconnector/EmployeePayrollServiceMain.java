@@ -8,7 +8,6 @@
 package com.bridgelabz.jdbcconnector;
 
 import java.sql.SQLException;
-import java.util.Scanner;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

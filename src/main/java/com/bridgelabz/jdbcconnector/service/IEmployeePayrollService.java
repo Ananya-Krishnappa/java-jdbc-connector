@@ -9,4 +9,9 @@ import com.bridgelabz.jdbcconnector.exception.JdbcConnectorException;
 
 public interface IEmployeePayrollService {
 	public List<Employee> getEmployeeList() throws EmployeePayrollException, SQLException, JdbcConnectorException;
+
+	public int updateSalaryByName(String name, Double salary)
+			throws JdbcConnectorException, SQLException, EmployeePayrollException;
+
+	public Double getSalaryByName(String name) throws JdbcConnectorException, SQLException;
 }
