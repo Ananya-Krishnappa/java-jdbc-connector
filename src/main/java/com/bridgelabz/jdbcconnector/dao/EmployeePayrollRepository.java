@@ -17,6 +17,7 @@ import com.bridgelabz.jdbcconnector.dto.Employee;
 import com.bridgelabz.jdbcconnector.exception.EmployeePayrollException;
 import com.bridgelabz.jdbcconnector.exception.JdbcConnectorException;
 import com.bridgelabz.jdbcconnector.type.Gender;
+import com.bridgelabz.jdbcconnector.type.SqlFunctions;
 import com.bridgelabz.jdbcconnector.utils.JdbcConnectionFactory;
 
 public class EmployeePayrollRepository {
@@ -93,9 +94,12 @@ public class EmployeePayrollRepository {
 			PreparedStatement preparedStatement = connection.prepareStatement(query);
 			preparedStatement.setString(1, name);
 			ResultSet resultSet = preparedStatement.executeQuery();
-			Double salary = 0.0;
+			Double salary = null;
 			while (resultSet.next()) {
 				salary = resultSet.getDouble("salary");
+			}
+			if (null == salary) {
+				throw new EmployeePayrollException("Salary details could not be fetched for employee " + name);
 			}
 			return salary;
 		} catch (Exception e) {
@@ -133,8 +137,10 @@ public class EmployeePayrollRepository {
 	 * @param resultSet
 	 * @return List<Employee>
 	 * @throws SQLException
+	 * @throws EmployeePayrollException
 	 */
-	private List<Employee> mapResultSetToEmployeeList(ResultSet resultSet) throws SQLException {
+	private List<Employee> mapResultSetToEmployeeList(ResultSet resultSet)
+			throws SQLException, EmployeePayrollException {
 		List<Employee> employeeList = new ArrayList<Employee>();
 		while (resultSet.next()) {
 			Employee employee = new Employee();
@@ -150,6 +156,57 @@ public class EmployeePayrollRepository {
 			employeeList.add(employee);
 			LOG.debug(resultSet.getInt("id") + " " + resultSet.getString("employee_name"));
 		}
+		if (employeeList.size() == 0) {
+			throw new EmployeePayrollException("No employees found");
+		}
 		return employeeList;
+	}
+
+	/**
+	 * Function to find the sum,avg,min,max of salary
+	 * 
+	 * @param sqlFunction
+	 * @param gender
+	 * @return Double
+	 * @throws EmployeePayrollException
+	 */
+	public Double getResultForFunction(SqlFunctions sqlFunction, Gender gender) throws EmployeePayrollException {
+		try (Connection connection = JdbcConnectionFactory.getJdbcConnection()) {
+			String query = "select " + sqlFunction.name()
+					+ "(p.salary) from payroll p inner join employee e on p.employee_id=e.id where e.gender = ? group by e.gender";
+			PreparedStatement preparedStatement = connection.prepareStatement(query);
+			preparedStatement.setString(1, gender.label);
+			ResultSet resultSet = preparedStatement.executeQuery();
+			Double result = null;
+			while (resultSet.next()) {
+				result = resultSet.getDouble(1);
+			}
+			return result;
+		} catch (Exception e) {
+			throw new EmployeePayrollException(e.getMessage());
+		}
+	}
+
+	/**
+	 * Function to count by gender.
+	 * 
+	 * @param gender
+	 * @return int
+	 * @throws EmployeePayrollException
+	 */
+	public int getCountByGender(Gender gender) throws EmployeePayrollException {
+		try (Connection connection = JdbcConnectionFactory.getJdbcConnection()) {
+			String query = "select count(*) from payroll p inner join employee e on p.employee_id=e.id where e.gender=?";
+			PreparedStatement preparedStatement = connection.prepareStatement(query);
+			preparedStatement.setString(1, gender.label);
+			ResultSet resultSet = preparedStatement.executeQuery();
+			int result = 0;
+			while (resultSet.next()) {
+				result = resultSet.getInt(1);
+			}
+			return result;
+		} catch (Exception e) {
+			throw new EmployeePayrollException(e.getMessage());
+		}
 	}
 }

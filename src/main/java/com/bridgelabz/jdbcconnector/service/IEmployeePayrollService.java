@@ -7,6 +7,8 @@ import java.util.List;
 import com.bridgelabz.jdbcconnector.dto.Employee;
 import com.bridgelabz.jdbcconnector.exception.EmployeePayrollException;
 import com.bridgelabz.jdbcconnector.exception.JdbcConnectorException;
+import com.bridgelabz.jdbcconnector.type.Gender;
+import com.bridgelabz.jdbcconnector.type.SqlFunctions;
 
 public interface IEmployeePayrollService {
 	public List<Employee> getEmployeeList() throws EmployeePayrollException, SQLException, JdbcConnectorException;
@@ -18,4 +20,8 @@ public interface IEmployeePayrollService {
 
 	public List<Employee> getEmployeeByStartDateRange(LocalDate startDate, LocalDate endDate)
 			throws EmployeePayrollException;
+
+	public Double getResultForFunction(SqlFunctions sqlFunction, Gender gender) throws EmployeePayrollException;
+
+	public int getCountByGender(Gender gender) throws EmployeePayrollException;
 }
