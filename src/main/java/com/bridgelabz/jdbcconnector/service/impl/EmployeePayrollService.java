@@ -42,7 +42,7 @@ public class EmployeePayrollService implements IEmployeePayrollService {
 	}
 
 	/**
-	 * Function to update the salary ny name
+	 * Function to update the salary by name
 	 */
 	public int updateSalaryByName(String name, Double salary)
 			throws JdbcConnectorException, SQLException, EmployeePayrollException {
@@ -55,9 +55,9 @@ public class EmployeePayrollService implements IEmployeePayrollService {
 
 	@Override
 	/**
-	 * This method is written to retrieve salary ny name
+	 * This method is written to retrieve salary by name
 	 */
-	public Double getSalaryByName(String name) throws JdbcConnectorException, SQLException {
+	public Double getSalaryByName(String name) throws JdbcConnectorException, SQLException, EmployeePayrollException {
 		Double result = employeePayrollRepository.getSalaryByName(name);
 		employeeSalaryMap.put(name, result);
 		return result;

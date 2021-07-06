@@ -13,5 +13,5 @@ public interface IEmployeePayrollService {
 	public int updateSalaryByName(String name, Double salary)
 			throws JdbcConnectorException, SQLException, EmployeePayrollException;
 
-	public Double getSalaryByName(String name) throws JdbcConnectorException, SQLException;
+	public Double getSalaryByName(String name) throws JdbcConnectorException, SQLException, EmployeePayrollException;
 }

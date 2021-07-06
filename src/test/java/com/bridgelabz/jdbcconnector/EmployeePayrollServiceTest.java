@@ -37,13 +37,15 @@ public class EmployeePayrollServiceTest {
 	}
 
 	@Test
-	public void givenEmpName_shouldRetrieveSalary() throws JdbcConnectorException, SQLException {
+	public void givenEmpName_shouldRetrieveSalary()
+			throws JdbcConnectorException, SQLException, EmployeePayrollException {
 		Double salary = employeePayrollService.getSalaryByName("ananya");
 		assertEquals(salary, 200000.0);
 	}
 
 	@Test
-	public void givenSalaryUpdated_shouldSyncWithDB() throws JdbcConnectorException, SQLException {
+	public void givenSalaryUpdated_shouldSyncWithDB()
+			throws JdbcConnectorException, SQLException, EmployeePayrollException {
 		Double salaryInDB = employeePayrollService.getSalaryByName("ananya");
 		Double salaryInLocal = employeePayrollService.employeeSalaryMap.get("ananya");
 		assertEquals(salaryInDB, salaryInLocal);
