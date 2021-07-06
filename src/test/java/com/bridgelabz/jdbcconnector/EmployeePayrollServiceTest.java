@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -49,5 +51,12 @@ public class EmployeePayrollServiceTest {
 		Double salaryInDB = employeePayrollService.getSalaryByName("ananya");
 		Double salaryInLocal = employeePayrollService.employeeSalaryMap.get("ananya");
 		assertEquals(salaryInDB, salaryInLocal);
+	}
+
+	@Test
+	public void givenDateRange_shouldReturnEmployeesJoinedInTheDateRange() throws EmployeePayrollException {
+		List<Employee> employeeList = new ArrayList<Employee>();
+		employeeList = employeePayrollService.getEmployeeByStartDateRange(LocalDate.of(2021, 1, 1), LocalDate.now());
+		assertEquals(2, employeeList.size());
 	}
 }

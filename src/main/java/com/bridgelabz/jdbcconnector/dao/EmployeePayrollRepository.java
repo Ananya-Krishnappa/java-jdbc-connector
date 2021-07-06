@@ -1,10 +1,12 @@
 package com.bridgelabz.jdbcconnector.dao;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,25 +43,11 @@ public class EmployeePayrollRepository {
 	 * @throws EmployeePayrollException
 	 */
 	public List<Employee> getEmployeeList() throws SQLException, JdbcConnectorException, EmployeePayrollException {
-		List<Employee> employeeList = new ArrayList<Employee>();
 		String query = "select * from employee";
 		try (Connection connection = JdbcConnectionFactory.getJdbcConnection()) {
 			Statement statement = connection.createStatement();
 			ResultSet resultSet = statement.executeQuery(query);
-			while (resultSet.next()) {
-				Employee employee = new Employee();
-				employee.setAddress(resultSet.getString("address"));
-				employee.setCity(resultSet.getString("city"));
-				employee.setCompany_id(resultSet.getInt("company_id"));
-				employee.setCountry(resultSet.getString("country"));
-				employee.setEmployee_name(resultSet.getString("employee_name"));
-				employee.setGender(Gender.valueOfLabel(resultSet.getString("gender")));
-				employee.setId(resultSet.getInt("id"));
-				employee.setPhone_num(resultSet.getString("phone_num"));
-				employee.setStart_date(resultSet.getDate("start_date").toLocalDate());
-				employeeList.add(employee);
-				LOG.debug(resultSet.getInt("id") + " " + resultSet.getString("employee_name"));
-			}
+			List<Employee> employeeList = mapResultSetToEmployeeList(resultSet);
 			return employeeList;
 		} catch (Exception e) {
 			throw new EmployeePayrollException(e.getMessage());
@@ -113,5 +101,55 @@ public class EmployeePayrollRepository {
 		} catch (Exception e) {
 			throw new EmployeePayrollException(e.getMessage());
 		}
+	}
+
+	/**
+	 * This method is written to get the list of employees in a given date range
+	 * 
+	 * @param startDate
+	 * @param endDate
+	 * @return List<Employee>
+	 * @throws EmployeePayrollException
+	 */
+	public List<Employee> getEmployeeByStartDateRange(LocalDate startDate, LocalDate endDate)
+			throws EmployeePayrollException {
+		try (Connection connection = JdbcConnectionFactory.getJdbcConnection()) {
+			String query = "select * from employee where start_date between ? and ?";
+			PreparedStatement preparedStatement = connection.prepareStatement(query);
+			preparedStatement.setDate(1, Date.valueOf(startDate));
+			preparedStatement.setDate(2, Date.valueOf(endDate));
+			ResultSet resultSet = preparedStatement.executeQuery();
+			List<Employee> employeeList = mapResultSetToEmployeeList(resultSet);
+			return employeeList;
+		} catch (Exception e) {
+			throw new EmployeePayrollException(e.getMessage());
+		}
+
+	}
+
+	/**
+	 * Function to map result set to employee list.
+	 * 
+	 * @param resultSet
+	 * @return List<Employee>
+	 * @throws SQLException
+	 */
+	private List<Employee> mapResultSetToEmployeeList(ResultSet resultSet) throws SQLException {
+		List<Employee> employeeList = new ArrayList<Employee>();
+		while (resultSet.next()) {
+			Employee employee = new Employee();
+			employee.setAddress(resultSet.getString("address"));
+			employee.setCity(resultSet.getString("city"));
+			employee.setCompany_id(resultSet.getInt("company_id"));
+			employee.setCountry(resultSet.getString("country"));
+			employee.setEmployee_name(resultSet.getString("employee_name"));
+			employee.setGender(Gender.valueOfLabel(resultSet.getString("gender")));
+			employee.setId(resultSet.getInt("id"));
+			employee.setPhone_num(resultSet.getString("phone_num"));
+			employee.setStart_date(resultSet.getDate("start_date").toLocalDate());
+			employeeList.add(employee);
+			LOG.debug(resultSet.getInt("id") + " " + resultSet.getString("employee_name"));
+		}
+		return employeeList;
 	}
 }

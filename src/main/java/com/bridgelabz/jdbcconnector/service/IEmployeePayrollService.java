@@ -1,6 +1,7 @@
 package com.bridgelabz.jdbcconnector.service;
 
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.List;
 
 import com.bridgelabz.jdbcconnector.dto.Employee;
@@ -14,4 +15,7 @@ public interface IEmployeePayrollService {
 			throws JdbcConnectorException, SQLException, EmployeePayrollException;
 
 	public Double getSalaryByName(String name) throws JdbcConnectorException, SQLException, EmployeePayrollException;
+
+	public List<Employee> getEmployeeByStartDateRange(LocalDate startDate, LocalDate endDate)
+			throws EmployeePayrollException;
 }

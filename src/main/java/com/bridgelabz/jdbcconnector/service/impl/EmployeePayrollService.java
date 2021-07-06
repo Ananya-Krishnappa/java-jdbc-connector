@@ -1,6 +1,7 @@
 package com.bridgelabz.jdbcconnector.service.impl;
 
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -62,5 +63,13 @@ public class EmployeePayrollService implements IEmployeePayrollService {
 		Double result = employeePayrollRepository.getSalaryByName(name);
 		employeeSalaryMap.put(name, result);
 		return result;
+	}
+
+	@Override
+	public List<Employee> getEmployeeByStartDateRange(LocalDate startDate, LocalDate endDate)
+			throws EmployeePayrollException {
+		List<Employee> employeeList = new ArrayList<Employee>();
+		employeeList = employeePayrollRepository.getEmployeeByStartDateRange(startDate, endDate);
+		return employeeList;
 	}
 }
