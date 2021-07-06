@@ -19,6 +19,18 @@ import com.bridgelabz.jdbcconnector.utils.JdbcConnectionFactory;
 
 public class EmployeePayrollRepository {
 	private static final Logger LOG = LogManager.getLogger(EmployeePayrollRepository.class);
+	private static EmployeePayrollRepository employeePayrollRepository;
+
+	private EmployeePayrollRepository() {
+
+	}
+
+	public static EmployeePayrollRepository getInstance() {
+		if (employeePayrollRepository == null) {
+			employeePayrollRepository = new EmployeePayrollRepository();
+		}
+		return employeePayrollRepository;
+	}
 
 	/**
 	 * To get the list of employees from the database
@@ -55,7 +67,7 @@ public class EmployeePayrollRepository {
 	}
 
 	/**
-	 * Function to update salary by name
+	 * Function to update salary by name.
 	 * 
 	 * @param name
 	 * @param salary

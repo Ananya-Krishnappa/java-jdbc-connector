@@ -17,17 +17,18 @@ import com.bridgelabz.jdbcconnector.service.IEmployeePayrollService;
 
 public class EmployeePayrollService implements IEmployeePayrollService {
 	private static final Logger LOG = LogManager.getLogger(EmployeePayrollService.class);
-	private final EmployeePayrollRepository employeePayrollRepository = new EmployeePayrollRepository();
+	private EmployeePayrollRepository employeePayrollRepository;
 	public List<Employee> employeeList = new ArrayList<Employee>();
 	public Map<String, Double> employeeSalaryMap = new HashMap<String, Double>();
 
 	public EmployeePayrollService() {
-
+		employeePayrollRepository = EmployeePayrollRepository.getInstance();
 	}
 
 	public EmployeePayrollService(List<Employee> employeeList, Map<String, Double> employeeSalaryMap) {
 		this.employeeList = employeeList;
 		this.employeeSalaryMap = employeeSalaryMap;
+		employeePayrollRepository = EmployeePayrollRepository.getInstance();
 	}
 
 	@Override
@@ -62,5 +63,4 @@ public class EmployeePayrollService implements IEmployeePayrollService {
 		employeeSalaryMap.put(name, result);
 		return result;
 	}
-
 }
