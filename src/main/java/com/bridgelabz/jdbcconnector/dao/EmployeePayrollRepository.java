@@ -209,4 +209,35 @@ public class EmployeePayrollRepository {
 			throw new EmployeePayrollException(e.getMessage());
 		}
 	}
+
+	/**
+	 * Function to insert new employee
+	 * 
+	 * @param employee
+	 * @return Employee
+	 * @throws EmployeePayrollException
+	 */
+	public Employee addNewEmployee(Employee employee) throws EmployeePayrollException {
+		int employeeId = -1;
+		try (Connection connection = JdbcConnectionFactory.getJdbcConnection()) {
+			String query = String.format(
+					"insert into employee(company_id,employee_name,gender,phone_num,start_date,address,city,country) "
+							+ "values('%s','%s','%s','%s','%s','%s','%s','%s')",
+					employee.getCompany_id(), employee.getEmployee_name(), employee.getGender().label,
+					employee.getPhone_num(), Date.valueOf(employee.getStart_date()), employee.getAddress(),
+					employee.getCity(), employee.getCountry());
+			Statement statement = connection.createStatement();
+			int rowAffected = statement.executeUpdate(query, statement.RETURN_GENERATED_KEYS);
+			if (rowAffected == 1) {
+				ResultSet result = statement.getGeneratedKeys();
+				if (result.next()) {
+					employeeId = result.getInt(1);
+					employee.setId(employeeId);
+				}
+			}
+			return employee;
+		} catch (Exception e) {
+			throw new EmployeePayrollException(e.getMessage());
+		}
+	}
 }

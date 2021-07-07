@@ -11,7 +11,13 @@ import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.bridgelabz.jdbcconnector.dao.EmployeePayrollRepository;
 import com.bridgelabz.jdbcconnector.dto.Employee;
 import com.bridgelabz.jdbcconnector.exception.EmployeePayrollException;
 import com.bridgelabz.jdbcconnector.exception.JdbcConnectorException;
@@ -19,11 +25,20 @@ import com.bridgelabz.jdbcconnector.service.impl.EmployeePayrollService;
 import com.bridgelabz.jdbcconnector.type.Gender;
 import com.bridgelabz.jdbcconnector.type.SqlFunctions;
 
+@ExtendWith(MockitoExtension.class)
 public class EmployeePayrollServiceTest {
+
+	@InjectMocks
+	private EmployeePayrollService mockEmployeePayrollService;
+
 	private EmployeePayrollService employeePayrollService;
+
+	@Mock
+	EmployeePayrollRepository mockEmployeePayrollRepository;
 
 	@BeforeEach
 	public void initialize() {
+		mockEmployeePayrollService = new EmployeePayrollService(mockEmployeePayrollRepository);
 		employeePayrollService = new EmployeePayrollService();
 	}
 
@@ -37,7 +52,7 @@ public class EmployeePayrollServiceTest {
 	@Test
 	public void givenNoEmployeeRecordsInTable_whenFetchEmployeeListInDateRange_thenExceptionThrownAndAssertionSucceeds() {
 		Exception exception = assertThrows(EmployeePayrollException.class, () -> {
-			employeePayrollService.getEmployeeByStartDateRange(LocalDate.now(), LocalDate.now());
+			employeePayrollService.getEmployeeByStartDateRange(LocalDate.of(2000, 1, 1), LocalDate.of(2010, 1, 1));
 		});
 		String expectedMessage = "No employees found";
 		String actualMessage = exception.getMessage();
@@ -132,4 +147,30 @@ public class EmployeePayrollServiceTest {
 		int result1 = employeePayrollService.getCountByGender(Gender.MALE);
 		assertEquals(result1, 3);
 	}
+
+	@Test
+	public void givenEmployeeDetails_shouldInsertRecordInDatabase()
+			throws EmployeePayrollException, SQLException, JdbcConnectorException {
+		List<Employee> employeeList = employeePayrollService.getEmployeeList();
+		assertEquals(6, employeeList.size());
+		Employee employee = new Employee();
+		employee.setStart_date(LocalDate.now());
+		employee.setAddress("marthahalli");
+		employee.setCity("bengaluru");
+		employee.setCompany_id(3);
+		employee.setEmployee_name("Sam");
+		employee.setGender(Gender.FEMALE);
+		employee.setPhone_num("987653467");
+		employee.setCountry("india");
+
+		Employee newEmployee = new Employee(employee.getId(), employee.getCompany_id(), employee.getEmployee_name(),
+				employee.getGender(), employee.getPhone_num(), employee.getStart_date(), employee.getAddress(),
+				employee.getCity(), employee.getCountry());
+		newEmployee.setId(7);
+		Mockito.when(mockEmployeePayrollRepository.addNewEmployee(Mockito.any(Employee.class))).thenReturn(newEmployee);
+		Employee empInserted = mockEmployeePayrollService.addNewEmployee(employee);
+		assertTrue(empInserted.getId() == 7);
+		Mockito.verify(mockEmployeePayrollRepository).addNewEmployee(Mockito.any(Employee.class));
+	}
+
 }

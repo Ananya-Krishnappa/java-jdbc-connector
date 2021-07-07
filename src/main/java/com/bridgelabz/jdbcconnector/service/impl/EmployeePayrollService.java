@@ -28,6 +28,10 @@ public class EmployeePayrollService implements IEmployeePayrollService {
 		employeePayrollRepository = EmployeePayrollRepository.getInstance();
 	}
 
+	public EmployeePayrollService(EmployeePayrollRepository employeePayrollRepository) {
+		this.employeePayrollRepository = employeePayrollRepository;
+	}
+
 	public EmployeePayrollService(List<Employee> employeeList, Map<String, Double> employeeSalaryMap) {
 		this.employeeList = employeeList;
 		this.employeeSalaryMap = employeeSalaryMap;
@@ -108,10 +112,26 @@ public class EmployeePayrollService implements IEmployeePayrollService {
 	}
 
 	@Override
+	/**
+	 * Function to get the count by gender
+	 */
 	public int getCountByGender(Gender gender) throws EmployeePayrollException {
 		try {
 			int result = employeePayrollRepository.getCountByGender(gender);
 			return result;
+		} catch (Exception e) {
+			throw new EmployeePayrollException(e.getMessage());
+		}
+	}
+
+	@Override
+	/**
+	 * Function to insert new employee
+	 */
+	public Employee addNewEmployee(Employee employee) throws EmployeePayrollException {
+		try {
+			Employee emp = employeePayrollRepository.addNewEmployee(employee);
+			return emp;
 		} catch (Exception e) {
 			throw new EmployeePayrollException(e.getMessage());
 		}

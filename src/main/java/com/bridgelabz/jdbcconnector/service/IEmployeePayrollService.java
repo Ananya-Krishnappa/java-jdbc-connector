@@ -24,4 +24,6 @@ public interface IEmployeePayrollService {
 	public Double getResultForFunction(SqlFunctions sqlFunction, Gender gender) throws EmployeePayrollException;
 
 	public int getCountByGender(Gender gender) throws EmployeePayrollException;
+
+	public Employee addNewEmployee(Employee employee) throws EmployeePayrollException;
 }
