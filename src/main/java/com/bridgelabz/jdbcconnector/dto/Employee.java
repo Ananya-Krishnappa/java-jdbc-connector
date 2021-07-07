@@ -15,6 +15,7 @@ public class Employee {
 	public String city;
 	public String country;
 	public Double salary;
+	public boolean isActive;
 	public int departmentId;
 	public String departmentName;
 
@@ -23,7 +24,7 @@ public class Employee {
 	}
 
 	public Employee(int id, int company_id, String employee_name, Gender gender, String phone_num, LocalDate start_date,
-			String address, String city, String country) {
+			String address, String city, String country, boolean isActive) {
 		super();
 		this.id = id;
 		this.company_id = company_id;
@@ -34,6 +35,15 @@ public class Employee {
 		this.address = address;
 		this.city = city;
 		this.country = country;
+		this.isActive = isActive;
+	}
+
+	public boolean isActive() {
+		return isActive;
+	}
+
+	public void setActive(boolean isActive) {
+		this.isActive = isActive;
 	}
 
 	public String getDepartmentName() {
@@ -136,6 +146,7 @@ public class Employee {
 	public String toString() {
 		return "Employee [id=" + id + ", company_id=" + company_id + ", employee_name=" + employee_name + ", gender="
 				+ gender + ", phone_num=" + phone_num + ", start_date=" + start_date + ", address=" + address
-				+ ", city=" + city + ", country=" + country + "]";
+				+ ", city=" + city + ", country=" + country + ", salary=" + salary + ", departmentId=" + departmentId
+				+ ", departmentName=" + departmentName + ", isActive=" + isActive + "]";
 	}
 }

@@ -334,4 +334,23 @@ public class EmployeePayrollRepository {
 			throw new EmployeePayrollException(e.getMessage());
 		}
 	}
+
+	/**
+	 * Function to delete employee by id
+	 * 
+	 * @param id
+	 * @return int
+	 * @throws EmployeePayrollException
+	 */
+	public int deleteEmployeeById(int id) throws EmployeePayrollException {
+		try (Connection connection = JdbcConnectionFactory.getJdbcConnection()) {
+			String query = "UPDATE employee SET is_active = 0 WHERE id = ?";
+			PreparedStatement preparedStatement = connection.prepareStatement(query);
+			preparedStatement.setInt(1, id);
+			int resultSet = preparedStatement.executeUpdate();
+			return resultSet;
+		} catch (Exception e) {
+			throw new EmployeePayrollException(e.getMessage());
+		}
+	}
 }

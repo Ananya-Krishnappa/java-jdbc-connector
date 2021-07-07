@@ -171,4 +171,20 @@ public class EmployeePayrollService implements IEmployeePayrollService {
 			throw new EmployeePayrollException(e.getMessage());
 		}
 	}
+
+	@Override
+	/**
+	 * Function to delete employee by id
+	 */
+	public int deleteEmployeeById(int id) throws EmployeePayrollException {
+		try {
+			int result = employeePayrollRepository.deleteEmployeeById(id);
+			if (result == 0) {
+				throw new EmployeePayrollException("Employee does not exist");
+			}
+			return result;
+		} catch (Exception e) {
+			throw new EmployeePayrollException(e.getMessage());
+		}
+	}
 }

@@ -1,9 +1,5 @@
 package com.bridgelabz.jdbcconnector.dto;
 
-import java.time.LocalDate;
-
-import com.bridgelabz.jdbcconnector.type.Gender;
-
 public class Payroll {
 	public Integer id;
 	public int employee_id;

@@ -173,11 +173,19 @@ public class EmployeePayrollServiceTest {
 
 		Employee newEmployee = new Employee(employee.getId(), employee.getCompany_id(), employee.getEmployee_name(),
 				employee.getGender(), employee.getPhone_num(), employee.getStart_date(), employee.getAddress(),
-				employee.getCity(), employee.getCountry());
+				employee.getCity(), employee.getCountry(), employee.isActive());
 		newEmployee.setId(7);
 		Mockito.when(mockEmployeePayrollRepository.addNewEmployee(Mockito.any(Employee.class))).thenReturn(newEmployee);
 		Employee empInserted = mockEmployeePayrollService.addNewEmployee(employee);
 		assertTrue(empInserted.getId() == 7);
 		Mockito.verify(mockEmployeePayrollRepository).addNewEmployee(Mockito.any(Employee.class));
+	}
+
+	@Test
+	public void givenEmployeeId_whenDeleteEmployee_shouldTurnIsActiveFalse() throws EmployeePayrollException {
+		Mockito.when(mockEmployeePayrollRepository.deleteEmployeeById(Mockito.anyInt())).thenReturn(1);
+		int result = mockEmployeePayrollService.deleteEmployeeById(6);
+		assertTrue(result > 0);
+		Mockito.verify(mockEmployeePayrollRepository).deleteEmployeeById(Mockito.anyInt());
 	}
 }

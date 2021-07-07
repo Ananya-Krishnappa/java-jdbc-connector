@@ -28,4 +28,6 @@ public interface IEmployeePayrollService {
 	public Employee addNewEmployee(Employee employee) throws EmployeePayrollException;
 
 	public List<Employee> getEmployeeAndDepartmentList() throws EmployeePayrollException;
+
+	public int deleteEmployeeById(int id) throws EmployeePayrollException;
 }
