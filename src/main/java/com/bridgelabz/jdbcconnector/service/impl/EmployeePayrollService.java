@@ -12,6 +12,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.bridgelabz.jdbcconnector.dao.EmployeePayrollRepository;
 import com.bridgelabz.jdbcconnector.dto.Employee;
+import com.bridgelabz.jdbcconnector.dto.Payroll;
 import com.bridgelabz.jdbcconnector.exception.EmployeePayrollException;
 import com.bridgelabz.jdbcconnector.exception.JdbcConnectorException;
 import com.bridgelabz.jdbcconnector.service.IEmployeePayrollService;
@@ -77,6 +78,25 @@ public class EmployeePayrollService implements IEmployeePayrollService {
 		try {
 			Double result = employeePayrollRepository.getSalaryByName(name);
 			employeeSalaryMap.put(name, result);
+			return result;
+		} catch (Exception e) {
+			throw new EmployeePayrollException(e.getMessage());
+		}
+	}
+
+	/**
+	 * Function to retrieve payroll by employee id
+	 * 
+	 * @param employeeId
+	 * @return Payroll
+	 * @throws JdbcConnectorException
+	 * @throws SQLException
+	 * @throws EmployeePayrollException
+	 */
+	public Payroll getPayrollByEmployeeId(int employeeId)
+			throws JdbcConnectorException, SQLException, EmployeePayrollException {
+		try {
+			Payroll result = employeePayrollRepository.getPayrollByEmployeeId(employeeId);
 			return result;
 		} catch (Exception e) {
 			throw new EmployeePayrollException(e.getMessage());

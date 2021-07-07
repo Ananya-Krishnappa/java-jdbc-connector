@@ -14,6 +14,7 @@ public class Employee {
 	public String address;
 	public String city;
 	public String country;
+	public Double salary;
 
 	public Employee() {
 
@@ -31,6 +32,14 @@ public class Employee {
 		this.address = address;
 		this.city = city;
 		this.country = country;
+	}
+
+	public Double getSalary() {
+		return salary;
+	}
+
+	public void setSalary(Double salary) {
+		this.salary = salary;
 	}
 
 	public int getId() {

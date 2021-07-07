@@ -14,6 +14,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.bridgelabz.jdbcconnector.dto.Employee;
+import com.bridgelabz.jdbcconnector.dto.Payroll;
 import com.bridgelabz.jdbcconnector.exception.EmployeePayrollException;
 import com.bridgelabz.jdbcconnector.exception.JdbcConnectorException;
 import com.bridgelabz.jdbcconnector.type.Gender;
@@ -216,10 +217,16 @@ public class EmployeePayrollRepository {
 	 * @param employee
 	 * @return Employee
 	 * @throws EmployeePayrollException
+	 * @throws JdbcConnectorException
+	 * @throws SQLException
 	 */
-	public Employee addNewEmployee(Employee employee) throws EmployeePayrollException {
+	public Employee addNewEmployee(Employee employee)
+			throws EmployeePayrollException, JdbcConnectorException, SQLException {
 		int employeeId = -1;
-		try (Connection connection = JdbcConnectionFactory.getJdbcConnection()) {
+		int payrollId = -1;
+		Connection connection = JdbcConnectionFactory.getJdbcConnection();
+		connection.setAutoCommit(false);
+		try {
 			String query = String.format(
 					"insert into employee(company_id,employee_name,gender,phone_num,start_date,address,city,country) "
 							+ "values('%s','%s','%s','%s','%s','%s','%s','%s')",
@@ -232,10 +239,64 @@ public class EmployeePayrollRepository {
 				ResultSet result = statement.getGeneratedKeys();
 				if (result.next()) {
 					employeeId = result.getInt(1);
-					employee.setId(employeeId);
 				}
 			}
+			Double deductions = employee.getSalary() * 0.2;
+			Double taxable_pay = employee.getSalary() - deductions;
+			Double tax = taxable_pay * 0.1;
+			Double netpay = employee.getSalary() - tax;
+			String payrollQuery = String.format(
+					"insert into payroll(employee_id,salary,deductions,taxable_pay,netpay,tax) "
+							+ "values('%s','%s','%s','%s','%s','%s')",
+					employeeId, employee.getSalary(), deductions, taxable_pay, netpay, tax);
+			Statement statement1 = connection.createStatement();
+			int rowAffected1 = statement1.executeUpdate(payrollQuery, statement1.RETURN_GENERATED_KEYS);
+			if (rowAffected1 == 1) {
+				ResultSet result1 = statement1.getGeneratedKeys();
+				if (result1.next()) {
+					payrollId = result1.getInt(1);
+					LOG.debug("Payroll information is saved for the employee with payroll id " + payrollId);
+				}
+			}
+			connection.commit();
+			employee.setId(employeeId);
 			return employee;
+		} catch (Exception e) {
+			connection.rollback();
+			throw new EmployeePayrollException(e.getMessage());
+		} finally {
+			connection.close();
+		}
+	}
+
+	/**
+	 * Function to get payroll details when id is given
+	 * 
+	 * @param employeeId
+	 * @return Payroll
+	 * @throws EmployeePayrollException
+	 */
+	public Payroll getPayrollByEmployeeId(int employeeId) throws EmployeePayrollException {
+		try (Connection connection = JdbcConnectionFactory.getJdbcConnection()) {
+			String query = "select * from payroll where employee_id=?";
+			PreparedStatement preparedStatement = connection.prepareStatement(query);
+			preparedStatement.setInt(1, employeeId);
+			ResultSet resultSet = preparedStatement.executeQuery();
+			Payroll payroll = new Payroll();
+			while (resultSet.next()) {
+				payroll.setDeductions(resultSet.getDouble("deductions"));
+				payroll.setEmployee_id(resultSet.getInt("employee_id"));
+				payroll.setId(resultSet.getInt("id"));
+				payroll.setNetpay(resultSet.getDouble("netpay"));
+				payroll.setSalary(resultSet.getDouble("salary"));
+				payroll.setTax(resultSet.getDouble("tax"));
+				payroll.setTaxable_pay(resultSet.getDouble("taxable_pay"));
+			}
+			if (null == payroll.getId()) {
+				throw new EmployeePayrollException(
+						"Payroll information could not be fetched for employee " + employeeId);
+			}
+			return payroll;
 		} catch (Exception e) {
 			throw new EmployeePayrollException(e.getMessage());
 		}

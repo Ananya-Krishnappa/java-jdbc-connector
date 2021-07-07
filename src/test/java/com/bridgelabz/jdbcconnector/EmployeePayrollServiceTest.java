@@ -19,6 +19,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.bridgelabz.jdbcconnector.dao.EmployeePayrollRepository;
 import com.bridgelabz.jdbcconnector.dto.Employee;
+import com.bridgelabz.jdbcconnector.dto.Payroll;
 import com.bridgelabz.jdbcconnector.exception.EmployeePayrollException;
 import com.bridgelabz.jdbcconnector.exception.JdbcConnectorException;
 import com.bridgelabz.jdbcconnector.service.impl.EmployeePayrollService;
@@ -162,6 +163,7 @@ public class EmployeePayrollServiceTest {
 		employee.setGender(Gender.FEMALE);
 		employee.setPhone_num("987653467");
 		employee.setCountry("india");
+		employee.setSalary(2334598.0);
 
 		Employee newEmployee = new Employee(employee.getId(), employee.getCompany_id(), employee.getEmployee_name(),
 				employee.getGender(), employee.getPhone_num(), employee.getStart_date(), employee.getAddress(),
@@ -172,5 +174,4 @@ public class EmployeePayrollServiceTest {
 		assertTrue(empInserted.getId() == 7);
 		Mockito.verify(mockEmployeePayrollRepository).addNewEmployee(Mockito.any(Employee.class));
 	}
-
 }
