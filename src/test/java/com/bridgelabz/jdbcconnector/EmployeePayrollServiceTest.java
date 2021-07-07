@@ -19,7 +19,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.bridgelabz.jdbcconnector.dao.EmployeePayrollRepository;
 import com.bridgelabz.jdbcconnector.dto.Employee;
-import com.bridgelabz.jdbcconnector.dto.Payroll;
 import com.bridgelabz.jdbcconnector.exception.EmployeePayrollException;
 import com.bridgelabz.jdbcconnector.exception.JdbcConnectorException;
 import com.bridgelabz.jdbcconnector.service.impl.EmployeePayrollService;
@@ -47,6 +46,13 @@ public class EmployeePayrollServiceTest {
 	public void givenEmployeeRecordsInTable_shouldFetchEmployeeList()
 			throws EmployeePayrollException, SQLException, JdbcConnectorException {
 		List<Employee> employeeList = employeePayrollService.getEmployeeList();
+		assertEquals(6, employeeList.size());
+	}
+
+	@Test
+	public void givenEmployeeRecordsInTable_shouldFetchEmployeeListAndDepartment()
+			throws EmployeePayrollException, SQLException, JdbcConnectorException {
+		List<Employee> employeeList = employeePayrollService.getEmployeeAndDepartmentList();
 		assertEquals(6, employeeList.size());
 	}
 

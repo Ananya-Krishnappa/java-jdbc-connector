@@ -26,4 +26,6 @@ public interface IEmployeePayrollService {
 	public int getCountByGender(Gender gender) throws EmployeePayrollException;
 
 	public Employee addNewEmployee(Employee employee) throws EmployeePayrollException;
+
+	public List<Employee> getEmployeeAndDepartmentList() throws EmployeePayrollException;
 }

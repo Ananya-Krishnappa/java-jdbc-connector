@@ -15,6 +15,8 @@ public class Employee {
 	public String city;
 	public String country;
 	public Double salary;
+	public int departmentId;
+	public String departmentName;
 
 	public Employee() {
 
@@ -32,6 +34,22 @@ public class Employee {
 		this.address = address;
 		this.city = city;
 		this.country = country;
+	}
+
+	public String getDepartmentName() {
+		return departmentName;
+	}
+
+	public void setDepartmentName(String departmentName) {
+		this.departmentName = departmentName;
+	}
+
+	public int getDepartmentId() {
+		return departmentId;
+	}
+
+	public void setDepartmentId(int departmentId) {
+		this.departmentId = departmentId;
 	}
 
 	public Double getSalary() {

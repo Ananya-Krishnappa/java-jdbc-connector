@@ -156,4 +156,19 @@ public class EmployeePayrollService implements IEmployeePayrollService {
 			throw new EmployeePayrollException(e.getMessage());
 		}
 	}
+
+	@Override
+	/**
+	 * Function to retrieve employee and department list
+	 */
+	public List<Employee> getEmployeeAndDepartmentList() throws EmployeePayrollException {
+		try {
+			employeeList = employeePayrollRepository.getEmployeeAndDepartmentList();
+			LOG.debug("Number of employees retrieved " + employeeList.size());
+			LOG.debug("List of employees retrieved " + employeeList.toString());
+			return employeeList;
+		} catch (Exception e) {
+			throw new EmployeePayrollException(e.getMessage());
+		}
+	}
 }

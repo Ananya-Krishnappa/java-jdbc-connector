@@ -301,4 +301,37 @@ public class EmployeePayrollRepository {
 			throw new EmployeePayrollException(e.getMessage());
 		}
 	}
+
+	/**
+	 * Function to get employee details and department
+	 * 
+	 * @return List<Employee>
+	 * @throws EmployeePayrollException
+	 */
+	public List<Employee> getEmployeeAndDepartmentList() throws EmployeePayrollException {
+		String query = "select e.*,ed.department_id as departmentId,(select department_name from department where id=ed.department_id) as departmentName from employee e inner join employee_department ed on e.id=ed.employee_id";
+		try (Connection connection = JdbcConnectionFactory.getJdbcConnection()) {
+			Statement statement = connection.createStatement();
+			ResultSet resultSet = statement.executeQuery(query);
+			List<Employee> employeeList = new ArrayList<Employee>();
+			while (resultSet.next()) {
+				Employee employee = new Employee();
+				employee.setAddress(resultSet.getString("address"));
+				employee.setCity(resultSet.getString("city"));
+				employee.setCompany_id(resultSet.getInt("company_id"));
+				employee.setCountry(resultSet.getString("country"));
+				employee.setEmployee_name(resultSet.getString("employee_name"));
+				employee.setGender(Gender.valueOfLabel(resultSet.getString("gender")));
+				employee.setId(resultSet.getInt("id"));
+				employee.setPhone_num(resultSet.getString("phone_num"));
+				employee.setStart_date(resultSet.getDate("start_date").toLocalDate());
+				employee.setDepartmentId(resultSet.getInt("departmentId"));
+				employee.setDepartmentName(resultSet.getString("departmentName"));
+				employeeList.add(employee);
+			}
+			return employeeList;
+		} catch (Exception e) {
+			throw new EmployeePayrollException(e.getMessage());
+		}
+	}
 }
